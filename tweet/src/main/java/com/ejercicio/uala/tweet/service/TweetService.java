@@ -1,0 +1,20 @@
+package com.ejercicio.uala.tweet.service;
+
+import com.ejercicio.uala.tweet.domain.Tweet;
+import com.ejercicio.uala.tweet.repository.TweetRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+@RequiredArgsConstructor
+@Service
+public class TweetService {
+
+    private final TweetRepository tweetRepository;
+
+    public Tweet crear(Tweet tweet) {
+        Assert.hasText(tweet.getMensaje(), "El tweet debe contener al menos un carácter.");
+        Assert.isTrue(tweet.getMensaje().length() < 250, "El tweet no puede contener mas de 250 caracteres.");
+        return tweetRepository.save(tweet);
+    }
+}
