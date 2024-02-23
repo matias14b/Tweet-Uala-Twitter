@@ -6,38 +6,44 @@ import java.time.LocalDateTime;
 
 public class TweetBuilder {
 
-    private final Tweet tweet;
+    private Long id;
+    private String mensaje;
+    private Long usuarioCreadorId;
+    private LocalDateTime fechaCreacion;
 
-    private TweetBuilder() {
-        tweet = new Tweet();
+    public static TweetBuilder base() {
+        TweetBuilder builder = new TweetBuilder();
+        builder.mensaje = "mensaje base";
+        builder.usuarioCreadorId = 1L;
+        return builder;
     }
 
-    public static TweetBuilder valido(){
-      TweetBuilder tweetBuilder = new TweetBuilder();
-      tweetBuilder.tweet.setMensaje("Mensaje valido");
-      tweetBuilder.tweet.setFechaCreacion(LocalDateTime.now());
-      tweetBuilder.tweet.setUsuarioCreadorId(1);
-      return tweetBuilder;
+    public TweetBuilder conMensaje(String mensaje) {
+        this.mensaje = mensaje;
+        return this;
     }
 
-    public static TweetBuilder invalido(){
-        TweetBuilder tweetBuilder = new TweetBuilder();
-        tweetBuilder.tweet.setMensaje("Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje inval");
-        return tweetBuilder;
+    public TweetBuilder conId(Long id) {
+        this.id = id;
+        return this;
     }
 
-    public Tweet conMensaje(String mensaje) {
+    public TweetBuilder conUsuarioCreacionId(Long id) {
+        this.usuarioCreadorId = id;
+        return this;
+    }
+
+    public TweetBuilder conFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+        return this;
+    }
+
+    public Tweet build() {
+        Tweet tweet = new Tweet();
+        tweet.setId(id);
         tweet.setMensaje(mensaje);
-        return tweet;
-    }
-
-    public Tweet conFechaCreacion(LocalDateTime fechaCreacion) {
         tweet.setFechaCreacion(fechaCreacion);
-        return tweet;
-    }
-
-    public Tweet conUsuarioCreadorId(Long id) {
-        tweet.setUsuarioCreadorId(id);
+        tweet.setUsuarioCreadorId(usuarioCreadorId);
         return tweet;
     }
 }

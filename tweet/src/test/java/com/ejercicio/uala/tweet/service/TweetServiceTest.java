@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -20,7 +18,7 @@ public class TweetServiceTest {
 
     @Test
     public void crear_conInformacionValida_guardaTweet() {
-        Tweet tweet = TweetBuilder.valido().conMensaje("mensaje de ejemplo");
+        Tweet tweet = TweetBuilder.base().conMensaje("Mensaje valido").build();
 
         Tweet tweetGuardado = tweetService.crear(tweet);
 
@@ -30,8 +28,9 @@ public class TweetServiceTest {
     @Test
     public void crear_conInformacionInvalidaMensajeSupera280Caracteres_lanzaExcepcion() {
         Tweet tweet = TweetBuilder
-                .invalido()
-                .conMensaje("Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje inval");
+                .base()
+                .conMensaje("Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje inval")
+                .build();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tweetService.crear(tweet))
@@ -41,8 +40,9 @@ public class TweetServiceTest {
     @Test
     public void crear_conInformacionInvalidaMensajeVacio_lanzaExcepcion() {
         Tweet tweet = TweetBuilder
-                .invalido()
-                .conMensaje("");
+                .base()
+                .conMensaje("")
+                .build();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tweetService.crear(tweet))
@@ -52,8 +52,9 @@ public class TweetServiceTest {
     @Test
     public void crear_conInformacionInvalidaMensajeConSoloEspacios_lanzaExcepcion() {
         Tweet tweet = TweetBuilder
-                .invalido()
-                .conMensaje("      ");
+                .base()
+                .conMensaje("      ")
+                .build();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tweetService.crear(tweet))
@@ -63,8 +64,9 @@ public class TweetServiceTest {
     @Test
     public void crear_conInformacionInvalidaMensajeNulo_lanzaExcepcion() {
         Tweet tweet = TweetBuilder
-                .invalido()
-                .conMensaje(null);
+                .base()
+                .conMensaje(null)
+                .build();
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tweetService.crear(tweet))
@@ -72,17 +74,24 @@ public class TweetServiceTest {
     }
 
     @Test
-    public void crear_conFechaDeCreacion_guardaTweetConFechaDeCreacion() {
-        Tweet tweet = TweetBuilder.valido().conFechaCreacion(LocalDateTime.now());
+    public void crear_conDatosValidos_guardaTweetConFechaDeCreacion() {
+        Tweet tweet = TweetBuilder
+                .base()
+                .conMensaje("Mensaje valido")
+                .conFechaCreacion(null)
+                .build();
 
         Tweet tweetGuardado = tweetService.crear(tweet);
 
-        assertThat(tweetGuardado.getFechaCreacion()).isEqualTo(tweet.getFechaCreacion());
+        assertThat(tweetGuardado.getFechaCreacion()).isNotNull();
     }
 
     @Test
     public void crear_conUsuarioCreadorId_guardaTweetConUsuarioCreadorId() {
-        Tweet tweet = TweetBuilder.valido().conUsuarioCreadorId(1L);
+        Tweet tweet = TweetBuilder
+                .base()
+                .conUsuarioCreacionId(1L)
+                .build();
 
         Tweet tweetGuardado = tweetService.crear(tweet);
 

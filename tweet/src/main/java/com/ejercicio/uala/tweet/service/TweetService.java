@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 public class TweetService {
@@ -15,6 +17,7 @@ public class TweetService {
     public Tweet crear(Tweet tweet) {
         Assert.hasText(tweet.getMensaje(), "El tweet debe contener al menos un carácter.");
         Assert.isTrue(tweet.getMensaje().length() < 250, "El tweet no puede contener mas de 250 caracteres.");
+        tweet.setFechaCreacion(LocalDateTime.now());
         return tweetRepository.save(tweet);
     }
 }
