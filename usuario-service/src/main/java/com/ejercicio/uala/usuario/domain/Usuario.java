@@ -1,4 +1,4 @@
-package com.ejercicio.uala.usuario.dominio;
+package com.ejercicio.uala.usuario.domain;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

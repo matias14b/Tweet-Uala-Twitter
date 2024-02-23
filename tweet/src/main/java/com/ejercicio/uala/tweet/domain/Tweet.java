@@ -17,6 +17,6 @@ public class Tweet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String mensaje;
-    private long usuarioCreadorId;
+    private Long usuarioCreadorId;
     private LocalDateTime fechaCreacion;
 }

@@ -97,4 +97,17 @@ public class TweetServiceTest {
 
         assertThat(tweetGuardado.getFechaCreacion()).isEqualTo(tweet.getFechaCreacion());
     }
+
+    @Test
+    public void crear_conUsuarioCreadorNull_lanzaExcepcion() {
+
+        Tweet tweet = TweetBuilder
+                .base()
+                .conUsuarioCreacionId(null)
+                .build();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tweetService.crear(tweet))
+                .withMessage("El Usuario creador no puede ser nulo.");
+    }
 }
