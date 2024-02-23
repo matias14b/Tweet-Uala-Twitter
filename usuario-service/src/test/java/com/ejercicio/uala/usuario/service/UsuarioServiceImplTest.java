@@ -26,7 +26,7 @@ class UsuarioServiceImplTest {
         Usuario usuario = UsuarioBuilder.base().conUsername("Ejemplo").build();
         persistirEnBase(usuario);
 
-        assertThat(usuarioServiceImpl.validarExisteUsuario(1L)).isTrue();
+        assertThat(usuarioServiceImpl.validarExisteUsuario(usuario.getId())).isTrue();
     }
 
     @Test
