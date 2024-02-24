@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,11 @@ public class TweetServiceImpl implements TweetService {
         Tweet tweet = tweetRepository.save(armarTweet(mensajeTweet, usuarioDTO));
 
         return new TweetDTO(tweet.getMensaje(), tweet.getUsuarioCreadorId(), tweet.getFechaCreacion());
+    }
+
+    @Override
+    public List<Tweet> obtenerTweetsPorUsuariosId(List<Long> usuariosId) {
+        return tweetRepository.findAllByUsuarioCreadorIdIn(usuariosId);
     }
 
     private void validarMensaje(String mensajeTweet) {

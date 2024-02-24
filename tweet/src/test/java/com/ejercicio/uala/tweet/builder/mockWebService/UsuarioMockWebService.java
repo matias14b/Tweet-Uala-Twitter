@@ -1,7 +1,5 @@
-package com.ejercicio.uala.tweet.builder.mockWebServer;
+package com.ejercicio.uala.tweet.builder.mockWebService;
 
-import com.ejercicio.uala.tweet.dto.UsuarioDTO;
-import com.fasterxml.jackson.core.JsonParser;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.json.JSONException;
@@ -14,19 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UsuarioMockWebServer {
+public class UsuarioMockWebService {
 
     private int puerto;
     private List<MockResponse> respuestas;
 
-    public static UsuarioMockWebServer conPeticion(String puerto) throws IOException {
-        UsuarioMockWebServer instance = new UsuarioMockWebServer();
+    public static UsuarioMockWebService conPeticion(String puerto) throws IOException {
+        UsuarioMockWebService instance = new UsuarioMockWebService();
         instance.puerto = Integer.parseInt(puerto);
         instance.respuestas = new ArrayList<>();
         return instance;
     }
 
-    public UsuarioMockWebServer conCredencialesValidas(Long id, String username) throws JSONException {
+    public UsuarioMockWebService conCredencialesValidas(Long id, String username) throws JSONException {
         MockResponse respuesta = new MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody(new JSONObject("{\"id\": \"" + id + " \", \"username\": \"" + username + "\"}").toString())
@@ -35,7 +33,7 @@ public class UsuarioMockWebServer {
         return this;
     }
 
-    public UsuarioMockWebServer conCredencialesInvalidas() throws IOException {
+    public UsuarioMockWebService conCredencialesInvalidas() throws IOException {
         MockResponse respuesta = new MockResponse()
                 .setResponseCode(HttpStatus.UNAUTHORIZED.value())
                 .setBody("Credenciales invalidas.");
