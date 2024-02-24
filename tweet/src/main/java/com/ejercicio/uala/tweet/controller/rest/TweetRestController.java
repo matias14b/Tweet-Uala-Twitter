@@ -5,10 +5,7 @@ import com.ejercicio.uala.tweet.dto.TweetDTO;
 import com.ejercicio.uala.tweet.service.TweetServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,10 +13,9 @@ public class TweetRestController {
 
     private final TweetServiceImpl tweetServiceImpl;
 
-    @PostMapping("/api/tweet")
+    @PostMapping("/api/{username}/tweet")
     @ResponseStatus(HttpStatus.CREATED)
-    public TweetDTO crear(@RequestBody Tweet tweet) {
-        Tweet tweetCreado = tweetServiceImpl.crear(tweet);
-        return new TweetDTO(tweetCreado.getMensaje(), tweetCreado.getUsuarioCreadorId(), tweetCreado.getFechaCreacion());
+    public TweetDTO crear(@PathVariable String username, @RequestBody String tweet) {
+        return tweetServiceImpl.crear(username, tweet);
     }
 }

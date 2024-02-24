@@ -5,14 +5,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.io.IOException;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @ControllerAdvice
 public class ExceptionControllerAdvice {
 
     private static final String MENSAJE_DEFAULT = "Se produjo un error inesperado. Intente nuevamente.";
+
+    @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
+    public ResponseEntity<String> handleIllegalAccessError(HttpClientErrorException.Unauthorized exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception) {

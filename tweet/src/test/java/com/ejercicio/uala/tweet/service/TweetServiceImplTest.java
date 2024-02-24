@@ -2,112 +2,112 @@ package com.ejercicio.uala.tweet.service;
 
 
 import com.ejercicio.uala.tweet.builder.TweetBuilder;
+import com.ejercicio.uala.tweet.builder.mockWebServer.UsuarioMockWebServer;
 import com.ejercicio.uala.tweet.domain.Tweet;
+import com.ejercicio.uala.tweet.dto.TweetDTO;
+import okhttp3.mockwebserver.MockWebServer;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.HttpClientErrorException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 public class TweetServiceImplTest {
+
+    @Value("${uala.twitter.servicio.usuario}")
+    private String apiUrlServicioUsuario;
 
     @Autowired
     private TweetServiceImpl tweetServiceImpl;
 
     @Test
-    public void crear_conInformacionValida_guardaTweet() {
-        Tweet tweet = TweetBuilder.base().conMensaje("Mensaje valido").build();
+    public void crear_conInformacionValida_guardaTweetYEscribeUsuarioCreadorId() throws IOException, JSONException {
+        String usuario = "ichiban";
+        String tweet = "mensaje valido";
 
-        Tweet tweetGuardado = tweetServiceImpl.crear(tweet);
-
-        assertThat(tweetGuardado).isNotNull();
+        try (MockWebServer mockWebServer = UsuarioMockWebServer.conPeticion(apiUrlServicioUsuario).conCredencialesValidas(1L, usuario).mock()) {
+            TweetDTO tweetGuardado = tweetServiceImpl.crear(usuario, tweet);
+            assertThat(tweetGuardado).isNotNull();
+            assertThat(tweetGuardado.getUsuarioCreadorId()).isEqualTo(1);
+        }
     }
 
     @Test
-    public void crear_conInformacionInvalidaMensajeSupera280Caracteres_lanzaExcepcion() {
-        Tweet tweet = TweetBuilder
-                .base()
-                .conMensaje("Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje inval")
-                .build();
+    public void crear_conInformacionInvalidaMensajeSupera280Caracteres_lanzaExcepcion() throws IOException, JSONException {
+        String usuario = "ichiban";
+        String mensaje = "Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje inval";
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
-                .withMessage("El tweet no puede contener mas de 250 caracteres.");
+        try (MockWebServer mockWebServer = UsuarioMockWebServer.conPeticion(apiUrlServicioUsuario).conCredencialesValidas(1L, usuario).mock()) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> tweetServiceImpl.crear(usuario, mensaje))
+                    .withMessage("El tweet no puede contener mas de 250 caracteres.");
+        }
     }
 
     @Test
-    public void crear_conInformacionInvalidaMensajeVacio_lanzaExcepcion() {
-        Tweet tweet = TweetBuilder
-                .base()
-                .conMensaje("")
-                .build();
+    public void crear_conInformacionInvalidaMensajeVacio_lanzaExcepcion() throws IOException, JSONException {
+        String usuario = "ichiban";
+        String mensaje = "";
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
-                .withMessage("El tweet debe contener al menos un carácter.");
+        try (MockWebServer mockWebServer = UsuarioMockWebServer.conPeticion(apiUrlServicioUsuario).conCredencialesValidas(1L, usuario).mock()) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> tweetServiceImpl.crear(usuario, mensaje))
+                    .withMessage("El tweet debe contener al menos un carácter.");
+        }
     }
 
     @Test
-    public void crear_conInformacionInvalidaMensajeConSoloEspacios_lanzaExcepcion() {
-        Tweet tweet = TweetBuilder
-                .base()
-                .conMensaje("      ")
-                .build();
-
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
-                .withMessage("El tweet debe contener al menos un carácter.");
+    public void crear_conInformacionInvalidaMensajeConSoloEspacios_lanzaExcepcion() throws IOException, JSONException {
+        String usuario = "ichiban";
+        String mensaje = "   ";
+        try (MockWebServer mockWebServer = UsuarioMockWebServer.conPeticion(apiUrlServicioUsuario).conCredencialesValidas(1L, usuario).mock()) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> tweetServiceImpl.crear(usuario, mensaje))
+                    .withMessage("El tweet debe contener al menos un carácter.");
+        }
     }
 
     @Test
-    public void crear_conInformacionInvalidaMensajeNulo_lanzaExcepcion() {
-        Tweet tweet = TweetBuilder
-                .base()
-                .conMensaje(null)
-                .build();
+    public void crear_conInformacionInvalidaMensajeNulo_lanzaExcepcion() throws IOException, JSONException {
+        String usuario = "ichiban";
+        String mensaje = null;
+        try (MockWebServer mockWebServer = UsuarioMockWebServer.conPeticion(apiUrlServicioUsuario).conCredencialesValidas(1L, usuario).mock()) {
 
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
-                .withMessage("El tweet debe contener al menos un carácter.");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> tweetServiceImpl.crear(usuario, mensaje))
+                    .withMessage("El tweet debe contener al menos un carácter.");
+        }
     }
 
     @Test
-    public void crear_conDatosValidos_guardaTweetConFechaDeCreacion() {
-        Tweet tweet = TweetBuilder
-                .base()
-                .conMensaje("Mensaje valido")
-                .conFechaCreacion(null)
-                .build();
+    public void crear_conDatosValidos_guardaTweetConFechaDeCreacion() throws IOException, JSONException {
+        String usuario = "ichiban";
+        String mensaje = "mensaje";
 
-        Tweet tweetGuardado = tweetServiceImpl.crear(tweet);
+        try (MockWebServer mockWebServer = UsuarioMockWebServer.conPeticion(apiUrlServicioUsuario).conCredencialesValidas(1L, usuario).mock()) {
 
-        assertThat(tweetGuardado.getFechaCreacion()).isNotNull();
+            TweetDTO tweetGuardado = tweetServiceImpl.crear(usuario, mensaje);
+
+            assertThat(tweetGuardado.getFechaCreacion()).isNotNull();
+        }
     }
 
     @Test
-    public void crear_conUsuarioCreadorId_guardaTweetConUsuarioCreadorId() {
-        Tweet tweet = TweetBuilder
-                .base()
-                .conUsuarioCreacionId(1L)
-                .build();
+    public void crear_conUsuarioCreadorInvalido_lanzaExcepcion() throws IOException {
+        String usuario = "ochiban";
+        String mensaje = "mensaje";
 
-        Tweet tweetGuardado = tweetServiceImpl.crear(tweet);
+        try (MockWebServer mockWebServer = UsuarioMockWebServer.conPeticion(apiUrlServicioUsuario).conCredencialesInvalidas().mock()) {
 
-        assertThat(tweetGuardado.getFechaCreacion()).isEqualTo(tweet.getFechaCreacion());
-    }
-
-    @Test
-    public void crear_conUsuarioCreadorNull_lanzaExcepcion() {
-
-        Tweet tweet = TweetBuilder
-                .base()
-                .conUsuarioCreacionId(null)
-                .build();
-
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
-                .withMessage("El Usuario creador no puede ser nulo.");
+            assertThatExceptionOfType(HttpClientErrorException.Unauthorized.class).isThrownBy(()
+                    -> tweetServiceImpl.crear(usuario, mensaje))
+                    .withMessage("401 Unauthorized: \"Credenciales invalidas.\"");
+        }
     }
 }

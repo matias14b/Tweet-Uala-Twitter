@@ -1,7 +1,8 @@
 package com.ejercicio.uala.tweet.service;
 
 import com.ejercicio.uala.tweet.domain.Tweet;
+import com.ejercicio.uala.tweet.dto.TweetDTO;
 
 public interface TweetService {
-    Tweet crear(Tweet tweet);
+    TweetDTO crear(String usuario, String tweet);
 }
