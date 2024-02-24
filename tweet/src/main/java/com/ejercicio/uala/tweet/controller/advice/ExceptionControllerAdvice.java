@@ -21,7 +21,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleDefaultException(Exception exception) throws IOException {
+    public ResponseEntity<String> handleDefaultException(Exception exception) {
         log.error("Error por Exception: Mensaje: [{}] -- Stack trace: [{}]", exception.getMessage(), exception);
         return new ResponseEntity<>(MENSAJE_DEFAULT, HttpStatus.INTERNAL_SERVER_ERROR);
     }

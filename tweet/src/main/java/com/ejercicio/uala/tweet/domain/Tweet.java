@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @NoArgsConstructor
+@Data
 public class Tweet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

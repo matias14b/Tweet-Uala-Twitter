@@ -11,16 +11,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 @SpringBootTest
-public class TweetServiceTest {
+public class TweetServiceImplTest {
 
     @Autowired
-    private TweetService tweetService;
+    private TweetServiceImpl tweetServiceImpl;
 
     @Test
     public void crear_conInformacionValida_guardaTweet() {
         Tweet tweet = TweetBuilder.base().conMensaje("Mensaje valido").build();
 
-        Tweet tweetGuardado = tweetService.crear(tweet);
+        Tweet tweetGuardado = tweetServiceImpl.crear(tweet);
 
         assertThat(tweetGuardado).isNotNull();
     }
@@ -33,7 +33,7 @@ public class TweetServiceTest {
                 .build();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetService.crear(tweet))
+                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
                 .withMessage("El tweet no puede contener mas de 250 caracteres.");
     }
 
@@ -45,7 +45,7 @@ public class TweetServiceTest {
                 .build();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetService.crear(tweet))
+                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
                 .withMessage("El tweet debe contener al menos un carácter.");
     }
 
@@ -57,7 +57,7 @@ public class TweetServiceTest {
                 .build();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetService.crear(tweet))
+                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
                 .withMessage("El tweet debe contener al menos un carácter.");
     }
 
@@ -69,7 +69,7 @@ public class TweetServiceTest {
                 .build();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetService.crear(tweet))
+                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
                 .withMessage("El tweet debe contener al menos un carácter.");
     }
 
@@ -81,7 +81,7 @@ public class TweetServiceTest {
                 .conFechaCreacion(null)
                 .build();
 
-        Tweet tweetGuardado = tweetService.crear(tweet);
+        Tweet tweetGuardado = tweetServiceImpl.crear(tweet);
 
         assertThat(tweetGuardado.getFechaCreacion()).isNotNull();
     }
@@ -93,7 +93,7 @@ public class TweetServiceTest {
                 .conUsuarioCreacionId(1L)
                 .build();
 
-        Tweet tweetGuardado = tweetService.crear(tweet);
+        Tweet tweetGuardado = tweetServiceImpl.crear(tweet);
 
         assertThat(tweetGuardado.getFechaCreacion()).isEqualTo(tweet.getFechaCreacion());
     }
@@ -107,7 +107,7 @@ public class TweetServiceTest {
                 .build();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tweetService.crear(tweet))
+                .isThrownBy(() -> tweetServiceImpl.crear(tweet))
                 .withMessage("El Usuario creador no puede ser nulo.");
     }
 }
