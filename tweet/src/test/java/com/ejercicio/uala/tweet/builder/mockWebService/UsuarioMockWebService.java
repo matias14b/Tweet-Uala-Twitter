@@ -41,6 +41,25 @@ public class UsuarioMockWebService {
         return this;
     }
 
+    public UsuarioMockWebService conUsuarioConSeguidoresValidos(Long id, String username, List<Long> seguidosId) throws JSONException {
+        MockResponse respuesta = new MockResponse()
+                .setResponseCode(HttpStatus.OK.value())
+                .setBody(new JSONObject(
+                        "{\"id\": \"" + id + "\", \"username\": \"" + username + "\", \"seguidosId\":" + seguidosId +" } ").toString())
+                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+        this.respuestas.add(respuesta);
+        return this;
+    }
+
+    public UsuarioMockWebService conUsuarioNoValido() throws JSONException {
+        MockResponse respuesta = new MockResponse()
+                .setResponseCode(HttpStatus.BAD_REQUEST.value())
+                .setBody("El usuario es inexistente.")
+                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+        this.respuestas.add(respuesta);
+        return this;
+    }
+
     public MockWebServer mock() throws IOException {
         MockWebServer mockWebServer = new MockWebServer();
         mockWebServer.start(this.puerto);

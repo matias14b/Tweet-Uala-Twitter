@@ -10,6 +10,6 @@ import java.util.List;
 public interface TweetService {
     TweetDTO crear(String usuario, String tweet);
 
-    Page<Tweet> obtenerTweetsPorUsuariosId(List<Long> usuariosId, Pageable pageable);
+    Page<Tweet> obtenerTweetsPorUsuarioId(Long usuariosId, Pageable pageable);
 
 }

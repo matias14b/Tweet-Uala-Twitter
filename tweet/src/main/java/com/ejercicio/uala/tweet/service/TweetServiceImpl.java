@@ -32,8 +32,9 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public Page<Tweet> obtenerTweetsPorUsuariosId(List<Long> usuariosId, Pageable pageable) {
-        return tweetRepository.findAllByUsuarioCreadorIdIn(usuariosId, pageable);
+    public Page<Tweet> obtenerTweetsPorUsuarioId(Long usuarioId, Pageable pageable) {
+        UsuarioDTO usuario = usuarioRepository.obtenerUsuario(usuarioId);
+        return tweetRepository.findAllByUsuarioCreadorIdIn(usuario.getSeguidosId(), pageable);
     }
 
     private void validarMensaje(String mensajeTweet) {

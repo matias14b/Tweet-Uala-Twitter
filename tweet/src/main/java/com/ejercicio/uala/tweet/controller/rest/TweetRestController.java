@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,19 +26,14 @@ public class TweetRestController {
         return tweetServiceImpl.crear(username, tweet);
     }
 
-    @GetMapping("/api/timeline/tweets/")
+    @GetMapping("/api/timeline/{idUsuario}/tweets/")
     @ResponseStatus(HttpStatus.CREATED)
-    public List<TweetDTO> obtenerTweetsPorUsuariosId(@RequestParam List<String> idUsuarios, @RequestParam String pagina, @RequestParam String tamanio) {
-        Pageable pageable = PageRequest.of(Integer.parseInt(pagina), Integer.parseInt(tamanio));
-        Page<Tweet> tweet = tweetServiceImpl.obtenerTweetsPorUsuariosId(convertirAListaDeLong(idUsuarios), pageable);
+    public List<TweetDTO> obtenerTweetsPorUsuariosId(@PathVariable long idUsuario, Pageable pageable) {
+        Page<Tweet> tweet = tweetServiceImpl.obtenerTweetsPorUsuarioId(idUsuario, pageable);
         return mapearADTO(tweet.getContent());
     }
 
     private List<TweetDTO> mapearADTO(List<Tweet> tweett) {
         return tweett.stream().map(tw -> new TweetDTO(tw.getId(), tw.getMensaje(), tw.getUsuarioCreadorId(), tw.getFechaCreacion())).collect(Collectors.toList());
-    }
-
-    private List<Long> convertirAListaDeLong(List<String> idUsuarios) {
-        return idUsuarios.stream().map(usuario -> Long.parseLong(usuario.toString())).collect(Collectors.toList());
     }
 }

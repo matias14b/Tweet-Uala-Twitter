@@ -127,11 +127,14 @@ public class TweetServiceImplTest {
 
     @Test
     @Transactional
-    public void obtenerTweetsPorUsuarioId_ConUsuarioIdDeUsuariosExistentesYTweetsConUsuarioCreadorIdCoincidenteConListaDeIds_retornaConjuntoDeDosTweets() {
+    public void obtenerTweetsPorUsuarioId_ConUsuarioIdDeUsuariosExistentesYTweetsConUsuarioCreadorIdCoincidenteConListaDeIds_retornaConjuntoDeDosTweets() throws IOException, JSONException {
+        Long id = 1L;
+        String username = "ichiban";
+
         Tweet tweetUno = TweetBuilder
                 .base()
                 .conMensaje("Tweet Uno")
-                .conUsuarioCreacionId(1L)
+                .conUsuarioCreacionId(2L)
                 .conFechaCreacion(LocalDateTime.now())
                 .build();
         persistirEnBase(tweetUno);
@@ -139,27 +142,34 @@ public class TweetServiceImplTest {
         Tweet tweetDos = TweetBuilder
                 .base()
                 .conMensaje("Tweet Dos")
-                .conUsuarioCreacionId(2L)
+                .conUsuarioCreacionId(3L)
                 .conFechaCreacion(LocalDateTime.now())
                 .build();
         persistirEnBase(tweetDos);
 
-        List<Long> usuariosId = Arrays.asList(tweetUno.getUsuarioCreadorId(), tweetDos.getUsuarioCreadorId());
-        Pageable pageable = PageRequest.of(0, usuariosId.size());
+        List<Long> usuariosSeguidos = Arrays.asList(tweetUno.getUsuarioCreadorId(), tweetDos.getUsuarioCreadorId());
+        Pageable pageable = PageRequest.of(0, usuariosSeguidos.size());
 
-        Page<Tweet> tweetsDeUsuariosSeguidos = tweetServiceImpl.obtenerTweetsPorUsuariosId(usuariosId, pageable);
+        try (MockWebServer mockWebServer = UsuarioMockWebService.conPeticion(apiUrlServicioUsuario).conUsuarioConSeguidoresValidos(id, username, usuariosSeguidos).mock()) {
 
-        assertThat(tweetsDeUsuariosSeguidos.getContent().get(0).getId()).isEqualTo(tweetUno.getId());
-        assertThat(tweetsDeUsuariosSeguidos.getContent().get(1).getId()).isEqualTo(tweetDos.getId());
+            Page<Tweet> tweetsDeUsuariosSeguidos = tweetServiceImpl.obtenerTweetsPorUsuarioId(id, pageable);
+
+            assertThat(tweetsDeUsuariosSeguidos.getContent().get(0).getId()).isEqualTo(tweetUno.getId());
+            assertThat(tweetsDeUsuariosSeguidos.getContent().get(1).getId()).isEqualTo(tweetDos.getId());
+        }
     }
 
     @Test
     @Transactional
-    public void obtenerTweetsPorUsuarioId_ConUsuarioIdDeUsuariosExistentesYConTweetsUsuarioCreadorIdNoCoincidentesConListaDeId_retornaConjuntoDeDosTweets() {
+    public void obtenerTweetsPorUsuarioId_ConUsuarioIdDeUsuariosExistentesYConTweetsUsuarioCreadorIdNoCoincidentesConListaDeId_retornaConjuntoVacio() throws IOException, JSONException {
+        Long id = 1L;
+        String username = "ichiban";
+        List<Long> seguidosId = Arrays.asList(2L, 3L);
+
         Tweet tweetUno = TweetBuilder
                 .base()
                 .conMensaje("Tweet Uno")
-                .conUsuarioCreacionId(1L)
+                .conUsuarioCreacionId(4L)
                 .conFechaCreacion(LocalDateTime.now())
                 .build();
         persistirEnBase(tweetUno);
@@ -167,21 +177,36 @@ public class TweetServiceImplTest {
         Tweet tweetDos = TweetBuilder
                 .base()
                 .conMensaje("Tweet Dos")
-                .conUsuarioCreacionId(2L)
+                .conUsuarioCreacionId(5L)
                 .conFechaCreacion(LocalDateTime.now())
                 .build();
         persistirEnBase(tweetDos);
+        try (MockWebServer mockWebServer = UsuarioMockWebService.conPeticion(apiUrlServicioUsuario).conUsuarioConSeguidoresValidos(id, username, seguidosId).mock()) {
+            Pageable pageable = PageRequest.of(0, seguidosId.size());
 
-        List<Long> usuariosId = Arrays.asList(100L, 200L);
-        Pageable pageable = PageRequest.of(0, usuariosId.size());
+            Page<Tweet> tweetsDeUsuariosSeguidos = tweetServiceImpl.obtenerTweetsPorUsuarioId(id, pageable);
 
-        Page<Tweet> tweetsDeUsuariosSeguidos = tweetServiceImpl.obtenerTweetsPorUsuariosId(usuariosId, pageable);
-        assertThat(tweetsDeUsuariosSeguidos.getContent()).doesNotContain(tweetUno, tweetDos);
+            assertThat(tweetsDeUsuariosSeguidos).isEmpty();
+        }
+    }
+
+    @Test
+    public void obtenerTweetsPorUsuarioId_conUsuarioCreadorInvalido_lanzaExcepcion() throws IOException, JSONException {
+        Long usuarioId = 10L;
+
+        try (MockWebServer mockWebServer = UsuarioMockWebService.conPeticion(apiUrlServicioUsuario).conUsuarioNoValido().mock()) {
+            Pageable pageable = PageRequest.of(0, 1);
+
+            assertThatExceptionOfType(HttpClientErrorException.BadRequest.class).isThrownBy(()
+                    -> tweetServiceImpl.obtenerTweetsPorUsuarioId(usuarioId, pageable))
+                    .withMessage("400 Bad Request: \"El usuario es inexistente.\"");
+        }
     }
 
     private void persistirEnBase(Tweet tweet) {
         entityManager.persist(tweet);
         entityManager.flush();
         entityManager.detach(tweet);
+
     }
 }
