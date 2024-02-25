@@ -6,6 +6,9 @@ import com.ejercicio.uala.tweet.dto.UsuarioDTO;
 import com.ejercicio.uala.tweet.repository.TweetRepository;
 import com.ejercicio.uala.tweet.repository.UsuarioRepositoryImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -18,7 +21,6 @@ public class TweetServiceImpl implements TweetService {
 
     private final TweetRepository tweetRepository;
     private final UsuarioRepositoryImpl usuarioRepository;
-
     public TweetDTO crear(String username, String mensajeTweet) {
         UsuarioDTO usuarioDTO = usuarioRepository.iniciarSesion(username);
 
@@ -30,8 +32,8 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public List<Tweet> obtenerTweetsPorUsuariosId(List<Long> usuariosId) {
-        return tweetRepository.findAllByUsuarioCreadorIdIn(usuariosId);
+    public Page<Tweet> obtenerTweetsPorUsuariosId(List<Long> usuariosId, Pageable pageable) {
+        return tweetRepository.findAllByUsuarioCreadorIdIn(usuariosId, pageable);
     }
 
     private void validarMensaje(String mensajeTweet) {

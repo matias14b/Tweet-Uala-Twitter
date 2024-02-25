@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -36,6 +39,7 @@ public class TweetServiceImplTest {
     EntityManager entityManager;
 
     @Test
+    @Transactional
     public void crear_conInformacionValida_guardaTweetYEscribeUsuarioCreadorId() throws IOException, JSONException {
         String usuario = "ichiban";
         String tweet = "mensaje valido";
@@ -95,6 +99,7 @@ public class TweetServiceImplTest {
     }
 
     @Test
+    @Transactional
     public void crear_conDatosValidos_guardaTweetConFechaDeCreacion() throws IOException, JSONException {
         String usuario = "ichiban";
         String mensaje = "mensaje";
@@ -127,6 +132,7 @@ public class TweetServiceImplTest {
                 .base()
                 .conMensaje("Tweet Uno")
                 .conUsuarioCreacionId(1L)
+                .conFechaCreacion(LocalDateTime.now())
                 .build();
         persistirEnBase(tweetUno);
 
@@ -134,11 +140,17 @@ public class TweetServiceImplTest {
                 .base()
                 .conMensaje("Tweet Dos")
                 .conUsuarioCreacionId(2L)
+                .conFechaCreacion(LocalDateTime.now())
                 .build();
         persistirEnBase(tweetDos);
 
-        List<Tweet> tweetsDeUsuariosSeguidos = tweetServiceImpl.obtenerTweetsPorUsuariosId(Arrays.asList(tweetUno.getUsuarioCreadorId(), tweetDos.getUsuarioCreadorId()));
-        assertThat(tweetsDeUsuariosSeguidos).contains(tweetUno, tweetDos);
+        List<Long> usuariosId = Arrays.asList(tweetUno.getUsuarioCreadorId(), tweetDos.getUsuarioCreadorId());
+        Pageable pageable = PageRequest.of(0, usuariosId.size());
+
+        Page<Tweet> tweetsDeUsuariosSeguidos = tweetServiceImpl.obtenerTweetsPorUsuariosId(usuariosId, pageable);
+
+        assertThat(tweetsDeUsuariosSeguidos.getContent().get(0).getId()).isEqualTo(tweetUno.getId());
+        assertThat(tweetsDeUsuariosSeguidos.getContent().get(1).getId()).isEqualTo(tweetDos.getId());
     }
 
     @Test
@@ -148,6 +160,7 @@ public class TweetServiceImplTest {
                 .base()
                 .conMensaje("Tweet Uno")
                 .conUsuarioCreacionId(1L)
+                .conFechaCreacion(LocalDateTime.now())
                 .build();
         persistirEnBase(tweetUno);
 
@@ -155,11 +168,15 @@ public class TweetServiceImplTest {
                 .base()
                 .conMensaje("Tweet Dos")
                 .conUsuarioCreacionId(2L)
+                .conFechaCreacion(LocalDateTime.now())
                 .build();
         persistirEnBase(tweetDos);
 
-        List<Tweet> tweetsDeUsuariosSeguidos = tweetServiceImpl.obtenerTweetsPorUsuariosId(Arrays.asList(100L, 200L));
-        assertThat(tweetsDeUsuariosSeguidos).doesNotContain(tweetUno, tweetDos);
+        List<Long> usuariosId = Arrays.asList(100L, 200L);
+        Pageable pageable = PageRequest.of(0, usuariosId.size());
+
+        Page<Tweet> tweetsDeUsuariosSeguidos = tweetServiceImpl.obtenerTweetsPorUsuariosId(usuariosId, pageable);
+        assertThat(tweetsDeUsuariosSeguidos.getContent()).doesNotContain(tweetUno, tweetDos);
     }
 
     private void persistirEnBase(Tweet tweet) {
