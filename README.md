@@ -11,11 +11,13 @@ Para esto se ha modelado 1 tabla:
 
 ### Dominio
 La clase de dominio esta formada por la clase Tweet
+
 ![image](https://github.com/matias14b/Tweet-Uala-Twitter/assets/127508318/bd048052-1160-4ebe-a93e-b0fc09cde382)
 
 ### Diagrama de servicio
 
 A nivel arquitectura se decidio por MVC 
+
 ![image](https://github.com/matias14b/Tweet-Uala-Twitter/assets/127508318/5f116f89-2e0d-4c48-b49e-723ca3eca209)
 
 
