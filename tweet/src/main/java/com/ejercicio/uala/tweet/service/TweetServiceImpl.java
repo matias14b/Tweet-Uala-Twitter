@@ -21,6 +21,7 @@ public class TweetServiceImpl implements TweetService {
 
     private final TweetRepository tweetRepository;
     private final UsuarioRepositoryImpl usuarioRepository;
+
     public TweetDTO crear(String username, String mensajeTweet) {
         UsuarioDTO usuarioDTO = usuarioRepository.iniciarSesion(username);
 
@@ -28,7 +29,7 @@ public class TweetServiceImpl implements TweetService {
 
         Tweet tweet = tweetRepository.save(armarTweet(mensajeTweet, usuarioDTO));
 
-        return new TweetDTO(tweet.getMensaje(), tweet.getUsuarioCreadorId(), tweet.getFechaCreacion());
+        return new TweetDTO(tweet.getId(), tweet.getMensaje(), tweet.getUsuarioCreadorId(), tweet.getFechaCreacion());
     }
 
     @Override

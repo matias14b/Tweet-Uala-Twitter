@@ -11,17 +11,10 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-@Builder
 public class TweetDTO implements Serializable {
     private Long id;
     private String mensaje;
     private Long usuarioCreadorId;
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime fechaCreacion;
-
-    public TweetDTO(String mensaje, Long usuarioCreadorId, LocalDateTime fechaCreacion) {
-        this.mensaje = mensaje;
-        this.usuarioCreadorId = usuarioCreadorId;
-        this.fechaCreacion = fechaCreacion;
-    }
 }
