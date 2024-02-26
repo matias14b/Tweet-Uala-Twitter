@@ -28,7 +28,7 @@ public class TweetRestController {
 
     @GetMapping("/api/{idUsuario}/tweets/")
     @ResponseStatus(HttpStatus.CREATED)
-    public List<TweetDTO> obtenerTweetsPorUsuariosId(@PathVariable long idUsuario, Pageable pageable) {
+    public List<TweetDTO> obtenerTweetsPorUsuarioId(@PathVariable long idUsuario, Pageable pageable) {
         Page<Tweet> tweet = tweetServiceImpl.obtenerTweetsPorUsuarioId(idUsuario, pageable);
         return mapearADTO(tweet.getContent());
     }

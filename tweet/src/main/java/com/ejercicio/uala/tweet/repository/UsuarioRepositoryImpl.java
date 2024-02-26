@@ -26,6 +26,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
                 .body(UsuarioDTO.class);
     }
 
+    @Override
     public UsuarioDTO obtenerUsuario(Long id) {
         return restClient.method(HttpMethod.GET)
                 .uri(urlBase + puerto + "/api/usuario/" + id + "/seguidos")
