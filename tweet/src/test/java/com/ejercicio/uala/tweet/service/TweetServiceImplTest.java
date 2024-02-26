@@ -54,12 +54,12 @@ public class TweetServiceImplTest {
     @Test
     public void crear_conInformacionInvalidaMensajeSupera280Caracteres_lanzaExcepcion() throws IOException, JSONException {
         String usuario = "ichiban";
-        String mensaje = "Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje inval";
+        String mensaje = "Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje invalido Mensaje Mensaje invalido Mensaje invalido M";
 
         try (MockWebServer mockWebServer = UsuarioMockWebService.conPeticion(apiUrlServicioUsuario).conCredencialesValidas(1L, usuario).mock()) {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> tweetServiceImpl.crear(usuario, mensaje))
-                    .withMessage("El tweet no puede contener mas de 250 caracteres.");
+                    .withMessage("El tweet no puede contener mas de 280 caracteres.");
         }
     }
 

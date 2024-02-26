@@ -40,7 +40,7 @@ public class TweetServiceImpl implements TweetService {
 
     private void validarMensaje(String mensajeTweet) {
         Assert.hasText(mensajeTweet, "El tweet debe contener al menos un carácter.");
-        Assert.isTrue(mensajeTweet.length() < 250, "El tweet no puede contener mas de 250 caracteres.");
+        Assert.isTrue(mensajeTweet.length() < 280, "El tweet no puede contener mas de 280 caracteres.");
     }
 
     private Tweet armarTweet(String mensajeTweet, UsuarioDTO usuarioDTO) {
