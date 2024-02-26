@@ -25,7 +25,7 @@ A nivel arquitectura se decidio por MVC
 
 El servicio Tweet expone los siguientes servicios:
 
-#### Seguir usuario
+#### Crear Tweet
 
 ```http
   POST /api/{username}/tweet
@@ -45,7 +45,7 @@ El servicio Tweet expone los siguientes servicios:
 }
 ```
 
-#### Iniciar sesion (Valida si existe usuario)
+#### obtener Tweets por usuarioID
 
 ```http
   GET /api/1/tweets/?page={page}&size={size}&sort={sort}
