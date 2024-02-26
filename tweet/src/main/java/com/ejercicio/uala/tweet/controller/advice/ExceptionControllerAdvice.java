@@ -13,21 +13,13 @@ public class ExceptionControllerAdvice {
 
     private static final String MENSAJE_DEFAULT = "Se produjo un error inesperado. Intente nuevamente.";
 
-    @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
-    public ResponseEntity<String> handleIllegalAccessError(HttpClientErrorException.Unauthorized exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
-    }
-
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exception) {
-        log.debug("[Error por IllegalArgumentException]: [{}] -- Stack trace: [{}]", exception.getMessage(), exception);
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleDefaultException(Exception exception) {
-        log.error("Error por Exception: Mensaje: [{}] -- Stack trace: [{}]", exception.getMessage(), exception);
         return new ResponseEntity<>(MENSAJE_DEFAULT, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
