@@ -1,4 +1,4 @@
-DROP ALL OBJECTS;
+DROP table if exists tweet;
 
 CREATE TABLE tweet (
     id                  BIGINT PRIMARY KEY AUTO_INCREMENT,

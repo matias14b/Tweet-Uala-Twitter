@@ -22,4 +22,9 @@ public class ExceptionControllerAdvice {
     public ResponseEntity<String> handleDefaultException(Exception exception) {
         return new ResponseEntity<>(MENSAJE_DEFAULT, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(IllegalAccessError.class)
+    public ResponseEntity<String> handleIllegalAccessError(IllegalAccessError exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
 }
